@@ -18,12 +18,10 @@ type githubProvider struct {
 // datasource.MetadataRequest.ProviderTypeName and
 // resource.MetadataRequest.ProviderTypeName fields automatically.
 func (g *githubProvider) Metadata(_ context.Context, _ provider.MetadataRequest, _ *provider.MetadataResponse) {
-	panic("not implemented") // TODO: Implement
 }
 
 // Schema should return the schema for this provider.
 func (g *githubProvider) Schema(_ context.Context, _ provider.SchemaRequest, _ *provider.SchemaResponse) {
-	panic("not implemented") // TODO: Implement
 }
 
 // Configure is called at the beginning of the provider lifecycle, when
@@ -43,7 +41,8 @@ func (g *githubProvider) Configure(_ context.Context, _ provider.ConfigureReques
 // The data source type name is determined by the DataSource implementing
 // the Metadata method. All data sources must have unique names.
 func (g *githubProvider) DataSources(_ context.Context) []func() datasource.DataSource {
-	panic("not implemented") // TODO: Implement
+	return []func() datasource.DataSource{}
+
 }
 
 // Resources returns a slice of functions to instantiate each Resource
@@ -52,7 +51,7 @@ func (g *githubProvider) DataSources(_ context.Context) []func() datasource.Data
 // The resource type name is determined by the Resource implementing
 // the Metadata method. All resources must have unique names.
 func (g *githubProvider) Resources(_ context.Context) []func() resource.Resource {
-	panic("not implemented") // TODO: Implement
+	return []func() resource.Resource{}
 }
 
 func providerFactory() provider.Provider {

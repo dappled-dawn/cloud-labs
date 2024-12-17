@@ -1,7 +1,6 @@
 package main // todo: main_test
 
 import (
-	"regexp"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-framework/providerserver"
@@ -19,13 +18,19 @@ func TestProvider(t *testing.T) {
 		},
 		Steps: []resource.TestStep{
 			{
-				ResourceName:       "",
-				Taint:              []string{},
-				Config:             "data \"github_repository\" \"example\" {\n  repository = \"terraform-provider-github\"\n}\n\noutput \"example\" {\n  value = data.github_repository.example\n}\n",
+				ResourceName: "",
+				Taint:        []string{},
+				Config: `
+				data "github_repository" "example" {
+				  repository = "terraform-provider-github"
+			        }
+				output "example" {
+				  value = data.github_repository.example.full_name
+				}
+				`,
 				Check:              func(*terraform.State) error { panic("not implemented") },
 				Destroy:            false,
 				ExpectNonEmptyPlan: false,
-				ExpectError:        &regexp.Regexp{},
 				ConfigPlanChecks: resource.ConfigPlanChecks{
 					PreApply:             []plancheck.PlanCheck{},
 					PostApplyPreRefresh:  []plancheck.PlanCheck{},
