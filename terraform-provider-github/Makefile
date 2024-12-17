@@ -9,6 +9,8 @@ build:
 example:
 	@cd examples/repository && terraform init && terraform apply -auto-approve
 
+test:
+	TF_ACC=1 go test -v ./...
 toggle:
 	@if [[ -f ~/.terraformrc ]]; then mv ~/.terraformrc ~/.terraformrc.bak; elif [[ -f ~/.terraformrc.bak ]]; then  mv ~/.terraformrc.bak ~/.terraformrc; fi
 
