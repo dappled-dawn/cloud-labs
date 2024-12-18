@@ -6,9 +6,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-framework/providerserver"
 	"github.com/hashicorp/terraform-plugin-go/tfprotov5"
-	"github.com/hashicorp/terraform-plugin-testing/config"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
-	"github.com/hashicorp/terraform-plugin-testing/statecheck"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
 )
 
@@ -44,24 +42,13 @@ func TestRepositoryResource_Import(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				ResourceName: "github_repository.shrinkwrap",
-				Taint:        []string{},
 				Config: `
 				resource "github_repository" "shrinkwrap" {
 				  full_name = "bbasata/shrinkwrap"
 			        }
 				`,
-				ConfigVariables: map[string]config.Variable{
-					"": nil,
-				},
-				Check:                     func(*terraform.State) error { panic("not implemented") },
-				Destroy:                   false,
-				ExpectNonEmptyPlan:        false,
-				ConfigStateChecks:         []statecheck.StateCheck{},
-				PlanOnly:                  false,
-				PreventDiskCleanup:        false,
-				PreventPostDestroyRefresh: false,
-				ImportState:               true,
-				ImportStateId:             "bbasata/shrinkwrap",
+				ImportState:   true,
+				ImportStateId: "bbasata/shrinkwrap",
 				ImportStateCheck: func(instances []*terraform.InstanceState) error {
 					if len(instances) != 1 {
 						return fmt.Errorf("expected 1 instance, got %d", len(instances))
@@ -75,16 +62,10 @@ func TestRepositoryResource_Import(t *testing.T) {
 					if instances[0].Attributes["visibility"] != "public" {
 						return fmt.Errorf("expected visibility to be 'public', got %s", instances[0].Attributes["visibility"])
 					}
-					/*
-						if instances[0].Attributes["ID"] != "shrinkwrap" {
-							return fmt.Errorf("expected name to be 'shrinkwrap', got %s", instances[0].ID)
-						}
-					*/
 					return nil
 				},
 				ImportStateVerify:                    true,
 				ImportStateVerifyIdentifierAttribute: "full_name",
-				ImportStateVerifyIgnore:              []string{},
 				ImportStatePersist:                   false,
 				RefreshState:                         false,
 			},
