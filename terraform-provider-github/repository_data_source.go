@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"fmt"
-	"strings"
 
 	"github.com/google/go-github/v67/github"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
@@ -28,6 +27,7 @@ func (r *repositoryDataSource) Metadata(_ context.Context, _ datasource.Metadata
 func (r *repositoryDataSource) Schema(_ context.Context, _ datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema.Attributes = map[string]schema.Attribute{
 		"full_name": schema.StringAttribute{
+			CustomType:  OwnerWithName{},
 			Description: "The repository name",
 			Optional:    true,
 		},
@@ -42,19 +42,13 @@ func (r *repositoryDataSource) Schema(_ context.Context, _ datasource.SchemaRequ
 // order to update state. Config values should be read from the
 // ReadRequest and new state values set on the ReadResponse.
 func (r *repositoryDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
-	var fullName string
-	req.Config.GetAttribute(ctx, path.Root("full_name"), &fullName)
-	var segments = strings.Split(fullName, "/")
-
-	if len(segments) != 2 {
-		resp.Diagnostics.AddError("invalid repository name", "repository name must be in the format 'owner/name'")
-		return
-	}
+	var repository Repository = Repository{}
+	resp.Diagnostics.Append(req.Config.Get(ctx, &repository)...)
 
 	client := github.NewClient(nil)
-	repo, _, err := client.Repositories.Get(ctx, segments[0], segments[1])
+	repo, _, err := client.Repositories.Get(ctx, repository.Owner(), repository.Name())
 	if err != nil {
-		resp.Diagnostics.AddError(fmt.Sprintf("failed to get repository %s", fullName), err.Error())
+		resp.Diagnostics.AddError(fmt.Sprintf("failed to get repository %s", repository.FullName.ValueString()), err.Error())
 		return
 	}
 
