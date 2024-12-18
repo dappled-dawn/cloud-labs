@@ -5,13 +5,13 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-framework/providerserver"
 	"github.com/hashicorp/terraform-plugin-go/tfprotov5"
+	"github.com/hashicorp/terraform-plugin-testing/config"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
-	"github.com/hashicorp/terraform-plugin-testing/plancheck"
 	"github.com/hashicorp/terraform-plugin-testing/statecheck"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
 )
 
-func TestProvider(t *testing.T) {
+func TestRepositoryDataSource(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		ProtoV5ProviderFactories: map[string]func() (tfprotov5.ProviderServer, error){
 			"github": providerserver.NewProtocol5WithError(providerFactory()),
@@ -19,7 +19,6 @@ func TestProvider(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				ResourceName: "",
-				Taint:        []string{},
 				Config: `
 				data "github_repository" "example" {
 				  full_name = "bbasata/shrinkwrap"
@@ -31,24 +30,39 @@ func TestProvider(t *testing.T) {
 				),
 				Destroy:            false,
 				ExpectNonEmptyPlan: false,
-				ConfigPlanChecks: resource.ConfigPlanChecks{
-					PreApply:             []plancheck.PlanCheck{},
-					PostApplyPreRefresh:  []plancheck.PlanCheck{},
-					PostApplyPostRefresh: []plancheck.PlanCheck{},
+			},
+		},
+	})
+}
+
+func TestRepositoryResource_Import(t *testing.T) {
+	resource.Test(t, resource.TestCase{
+		ProtoV5ProviderFactories: map[string]func() (tfprotov5.ProviderServer, error){
+			"github": providerserver.NewProtocol5WithError(providerFactory()),
+		},
+		Steps: []resource.TestStep{
+			{
+				ResourceName: "github_repository.shrinkwrap",
+				Taint:        []string{},
+				Config: `
+				resource "github_repository" "shrinkwrap" {
+				  full_name = "bbasata/shrinkwrap"
+			        }
+				`,
+				ConfigVariables: map[string]config.Variable{
+					"": nil,
 				},
-				RefreshPlanChecks: resource.RefreshPlanChecks{
-					PostRefresh: []plancheck.PlanCheck{},
-				},
+				Check:                                func(*terraform.State) error { panic("not implemented") },
+				Destroy:                              false,
+				ExpectNonEmptyPlan:                   false,
 				ConfigStateChecks:                    []statecheck.StateCheck{},
 				PlanOnly:                             false,
 				PreventDiskCleanup:                   false,
 				PreventPostDestroyRefresh:            false,
-				ImportState:                          false,
-				ImportStateId:                        "",
-				ImportStateIdPrefix:                  "",
-				ImportStateIdFunc:                    func(*terraform.State) (string, error) { panic("not implemented") },
+				ImportState:                          true,
+				ImportStateId:                        "bbasata/shrinkwrap",
 				ImportStateCheck:                     func([]*terraform.InstanceState) error { panic("not implemented") },
-				ImportStateVerify:                    false,
+				ImportStateVerify:                    true,
 				ImportStateVerifyIdentifierAttribute: "",
 				ImportStateVerifyIgnore:              []string{},
 				ImportStatePersist:                   false,
