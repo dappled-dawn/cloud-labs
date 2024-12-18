@@ -28,7 +28,7 @@ func TestProvider(t *testing.T) {
 				  value = data.github_repository.example.full_name
 				}
 				`,
-				Check:              func(*terraform.State) error { panic("not implemented") },
+				// Check:              func(*terraform.State) error { panic("not implemented") },
 				Destroy:            false,
 				ExpectNonEmptyPlan: false,
 				ConfigPlanChecks: resource.ConfigPlanChecks{

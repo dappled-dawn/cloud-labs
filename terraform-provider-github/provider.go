@@ -32,7 +32,6 @@ func (g *githubProvider) Schema(_ context.Context, _ provider.SchemaRequest, _ *
 // API client, which should be stored on the struct implementing the
 // Provider interface.
 func (g *githubProvider) Configure(_ context.Context, _ provider.ConfigureRequest, _ *provider.ConfigureResponse) {
-	panic("not implemented") // TODO: Implement
 }
 
 // DataSources returns a slice of functions to instantiate each DataSource

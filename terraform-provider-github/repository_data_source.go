@@ -34,5 +34,4 @@ func (r *repositoryDataSource) Schema(_ context.Context, _ datasource.SchemaRequ
 // order to update state. Config values should be read from the
 // ReadRequest and new state values set on the ReadResponse.
 func (r *repositoryDataSource) Read(_ context.Context, _ datasource.ReadRequest, _ *datasource.ReadResponse) {
-	panic("not implemented") // TODO: Implement
 }
