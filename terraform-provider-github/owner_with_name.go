@@ -86,9 +86,19 @@ func (o OwnerWithName) ValueFromString(_ context.Context, in basetypes.StringVal
 }
 
 func (o OwnerWithNameValue) Owner() string {
-	return strings.Split(o.StringValue.ValueString(), "/")[0]
+	var splits = strings.Split(o.StringValue.ValueString(), "/")
+	if len(splits) < 2 {
+		return ""
+	}
+
+	return splits[0]
 }
 
 func (o OwnerWithNameValue) Name() string {
-	return strings.Split(o.StringValue.ValueString(), "/")[1]
+	var splits = strings.Split(o.StringValue.ValueString(), "/")
+	if len(splits) < 2 {
+		return ""
+	}
+
+	return splits[1]
 }

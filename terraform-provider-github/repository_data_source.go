@@ -45,6 +45,10 @@ func (r *repositoryDataSource) Schema(_ context.Context, _ datasource.SchemaRequ
 			Description: "The repository description",
 			Computed:    true,
 		},
+		"visibility": schema.StringAttribute{
+			Description: "The repository visibility",
+			Computed:    true,
+		},
 	}
 }
 
@@ -61,6 +65,6 @@ func (r *repositoryDataSource) Read(ctx context.Context, req datasource.ReadRequ
 		return
 	}
 
-	var description = repo.GetDescription()
-	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("description"), description)...)
+	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("description"), repo.GetDescription())...)
+	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("visibility"), repo.GetVisibility())...)
 }

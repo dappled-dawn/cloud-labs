@@ -25,7 +25,10 @@ func TestProvider(t *testing.T) {
 				  full_name = "bbasata/shrinkwrap"
 			        }
 				`,
-				Check:              resource.TestCheckResourceAttr("data.github_repository.example", "description", "As an app, it shortens all the URLs. As a code base, it serves as a sandbox for software design experiments with Ruby and Rails."),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr("data.github_repository.example", "description", "As an app, it shortens all the URLs. As a code base, it serves as a sandbox for software design experiments with Ruby and Rails."),
+					resource.TestCheckResourceAttr("data.github_repository.example", "visibility", "public"),
+				),
 				Destroy:            false,
 				ExpectNonEmptyPlan: false,
 				ConfigPlanChecks: resource.ConfigPlanChecks{

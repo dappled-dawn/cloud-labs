@@ -5,6 +5,7 @@ import "github.com/hashicorp/terraform-plugin-framework/types"
 type Repository struct {
 	FullName    OwnerWithNameValue `tfsdk:"full_name"`
 	Description types.String       `tfsdk:"description"`
+	Visibility  types.String       `tfsdk:"visibility"`
 }
 
 func (r Repository) Owner() string {
