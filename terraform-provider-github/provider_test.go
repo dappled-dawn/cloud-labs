@@ -66,13 +66,22 @@ func TestRepositoryResource_Import(t *testing.T) {
 					if len(instances) != 1 {
 						return fmt.Errorf("expected 1 instance, got %d", len(instances))
 					}
-					if instances[0].Attributes["name"] != "shrinkwrap" {
+					for k, _ := range instances[0].Attributes {
+						fmt.Println(k)
+					}
+					if instances[0].Attributes["full_name"] != "bbasata/shrinkwrap" {
+						return fmt.Errorf("expected full_name to be 'bbasata/shrinkwrap', got %s", instances[0].Attributes["full_name"])
+					}
+					if instances[0].Attributes["visibility"] != "public" {
+						return fmt.Errorf("expected visibility to be 'public', got %s", instances[0].Attributes["visibility"])
+					}
+					if instances[0].Attributes["ID"] != "shrinkwrap" {
 						return fmt.Errorf("expected name to be 'shrinkwrap', got %s", instances[0].ID)
 					}
 					return nil
 				},
 				ImportStateVerify:                    true,
-				ImportStateVerifyIdentifierAttribute: "",
+				ImportStateVerifyIdentifierAttribute: "full_name",
 				ImportStateVerifyIgnore:              []string{},
 				ImportStatePersist:                   false,
 				RefreshState:                         false,

@@ -2,11 +2,14 @@ package main
 
 import (
 	"context"
+	"fmt"
+	"strings"
 
 	"github.com/google/go-github/v67/github"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 type repositoryResource struct {
@@ -27,7 +30,38 @@ func (r *repositoryResource) Configure(_ context.Context, req resource.Configure
 }
 
 // Schema should return the schema for this resource.
-func (r *repositoryResource) Schema(_ context.Context, _ resource.SchemaRequest, _ *resource.SchemaResponse) {
+func (r *repositoryResource) Schema(_ context.Context, _ resource.SchemaRequest, resp *resource.SchemaResponse) {
+	resp.Schema.Attributes = map[string]schema.Attribute{
+		"full_name": schema.StringAttribute{
+			Description: "The full name of the repository.",
+			Computed:    true,
+		},
+		"visibility": schema.StringAttribute{
+			Description: "The visibility of the repository.",
+			Computed:    true,
+		},
+	}
+}
+
+type ARepository struct {
+	FullName   types.String `tfsdk:"full_name"`
+	Visibility types.String `tfsdk:"visibility"`
+}
+
+func (a ARepository) Owner() string {
+	var segments = strings.Split(a.FullName.ValueString(), "/")
+	if len(segments) < 2 {
+		return ""
+	}
+	return segments[0]
+}
+
+func (a ARepository) Name() string {
+	var segments = strings.Split(a.FullName.ValueString(), "/")
+	if len(segments) < 2 {
+		return ""
+	}
+	return segments[1]
 }
 
 // ImportState is called when the provider must import a resource.
@@ -45,8 +79,17 @@ func (r *repositoryResource) Create(_ context.Context, _ resource.CreateRequest,
 // Read is called when the provider must read resource values in order
 // to update state. Planned state values should be read from the
 // ReadRequest and new state values set on the ReadResponse.
-func (r *repositoryResource) Read(_ context.Context, _ resource.ReadRequest, _ *resource.ReadResponse) {
-	panic("not implemented") // TODO: Implement
+func (r *repositoryResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
+	var repo ARepository
+	resp.Diagnostics.Append(req.State.Get(ctx, &repo)...)
+
+	raw_repo, _, err := r.client.Repositories.Get(ctx, repo.Owner(), repo.Name())
+	if err != nil {
+		resp.Diagnostics.AddError(fmt.Sprintf("failed to get repository %s/%s", repo.Owner(), repo.Name()), err.Error())
+	}
+
+	repo.Visibility = types.StringValue(raw_repo.GetVisibility())
+	resp.Diagnostics.Append(resp.State.Set(ctx, repo)...)
 }
 
 // Update is called to update the state of the resource. Config, planned
