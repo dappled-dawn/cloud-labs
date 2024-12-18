@@ -11,6 +11,7 @@ import (
 )
 
 type repositoryDataSource struct {
+	client *github.Client
 }
 
 func repositoryDataSourceFactory() datasource.DataSource {
@@ -21,6 +22,13 @@ func repositoryDataSourceFactory() datasource.DataSource {
 // examplecloud_thing.
 func (r *repositoryDataSource) Metadata(_ context.Context, _ datasource.MetadataRequest, resp *datasource.MetadataResponse) {
 	resp.TypeName = "github_repository"
+}
+
+func (r *repositoryDataSource) Configure(_ context.Context, req datasource.ConfigureRequest, _ *datasource.ConfigureResponse) {
+	data, ok := req.ProviderData.(*ProviderData)
+	if ok {
+		r.client = data.client
+	}
 }
 
 // Schema should return the schema for this data source.
@@ -45,8 +53,7 @@ func (r *repositoryDataSource) Read(ctx context.Context, req datasource.ReadRequ
 	var repository Repository = Repository{}
 	resp.Diagnostics.Append(req.Config.Get(ctx, &repository)...)
 
-	client := github.NewClient(nil)
-	repo, _, err := client.Repositories.Get(ctx, repository.Owner(), repository.Name())
+	repo, _, err := r.client.Repositories.Get(ctx, repository.Owner(), repository.Name())
 	if err != nil {
 		resp.Diagnostics.AddError(fmt.Sprintf("failed to get repository %s", repository.FullName.ValueString()), err.Error())
 		return

@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 
+	"github.com/google/go-github/v67/github"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/provider"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -31,7 +32,11 @@ func (g *githubProvider) Schema(_ context.Context, _ provider.SchemaRequest, _ *
 // Values from provider configuration are often used to initialise an
 // API client, which should be stored on the struct implementing the
 // Provider interface.
-func (g *githubProvider) Configure(_ context.Context, _ provider.ConfigureRequest, _ *provider.ConfigureResponse) {
+func (g *githubProvider) Configure(_ context.Context, _ provider.ConfigureRequest, resp *provider.ConfigureResponse) {
+	client := github.NewClient(nil)
+	resp.DataSourceData = &ProviderData{
+		client: client,
+	}
 }
 
 // DataSources returns a slice of functions to instantiate each DataSource
