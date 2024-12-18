@@ -22,7 +22,7 @@ func TestProvider(t *testing.T) {
 				Taint:        []string{},
 				Config: `
 				data "github_repository" "example" {
-				  repository = "terraform-provider-github"
+				  full_name = "dappled-dawn/terraform-provider-github"
 			        }
 				output "example" {
 				  value = data.github_repository.example.full_name

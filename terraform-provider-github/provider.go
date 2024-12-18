@@ -41,8 +41,9 @@ func (g *githubProvider) Configure(_ context.Context, _ provider.ConfigureReques
 // The data source type name is determined by the DataSource implementing
 // the Metadata method. All data sources must have unique names.
 func (g *githubProvider) DataSources(_ context.Context) []func() datasource.DataSource {
-	return []func() datasource.DataSource{}
-
+	return []func() datasource.DataSource{
+		repositoryDataSourceFactory,
+	}
 }
 
 // Resources returns a slice of functions to instantiate each Resource
