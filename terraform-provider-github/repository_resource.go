@@ -25,7 +25,10 @@ func (r *repositoryResource) Metadata(_ context.Context, req resource.MetadataRe
 // Configure is called when the provider is configured. This is where
 // the provider should register its resources.
 func (r *repositoryResource) Configure(_ context.Context, req resource.ConfigureRequest, _ *resource.ConfigureResponse) {
-	providerData := req.ProviderData.(*ProviderData)
+	providerData, ok := req.ProviderData.(*ProviderData)
+	if !ok {
+		return
+	}
 	r.client = providerData.client
 }
 
@@ -34,7 +37,7 @@ func (r *repositoryResource) Schema(_ context.Context, _ resource.SchemaRequest,
 	resp.Schema.Attributes = map[string]schema.Attribute{
 		"full_name": schema.StringAttribute{
 			Description: "The full name of the repository.",
-			Computed:    true,
+			Optional:    true,
 		},
 		"visibility": schema.StringAttribute{
 			Description: "The visibility of the repository.",
@@ -107,7 +110,6 @@ func (r *repositoryResource) Update(_ context.Context, _ resource.UpdateRequest,
 // call DeleteResponse.State.RemoveResource(), so it can be omitted
 // from provider logic.
 func (r *repositoryResource) Delete(_ context.Context, _ resource.DeleteRequest, _ *resource.DeleteResponse) {
-	panic("not implemented") // TODO: Implement
 }
 
 func repositoryResourceFactory() resource.Resource {
