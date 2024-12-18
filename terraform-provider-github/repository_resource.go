@@ -88,6 +88,7 @@ func (r *repositoryResource) Read(ctx context.Context, req resource.ReadRequest,
 		resp.Diagnostics.AddError(fmt.Sprintf("failed to get repository %s/%s", repo.Owner(), repo.Name()), err.Error())
 	}
 
+	repo.FullName = types.StringValue(raw_repo.GetFullName())
 	repo.Visibility = types.StringValue(raw_repo.GetVisibility())
 	resp.Diagnostics.Append(resp.State.Set(ctx, repo)...)
 }
