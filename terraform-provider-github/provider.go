@@ -18,7 +18,8 @@ type githubProvider struct {
 // Implementing the MetadataResponse.TypeName will populate the
 // datasource.MetadataRequest.ProviderTypeName and
 // resource.MetadataRequest.ProviderTypeName fields automatically.
-func (g *githubProvider) Metadata(_ context.Context, _ provider.MetadataRequest, _ *provider.MetadataResponse) {
+func (g *githubProvider) Metadata(_ context.Context, _ provider.MetadataRequest, resp *provider.MetadataResponse) {
+	resp.TypeName = "github"
 }
 
 // Schema should return the schema for this provider.
@@ -56,7 +57,9 @@ func (g *githubProvider) DataSources(_ context.Context) []func() datasource.Data
 // The resource type name is determined by the Resource implementing
 // the Metadata method. All resources must have unique names.
 func (g *githubProvider) Resources(_ context.Context) []func() resource.Resource {
-	return []func() resource.Resource{}
+	return []func() resource.Resource{
+		repositoryResourceFactory,
+	}
 }
 
 func providerFactory() provider.Provider {

@@ -21,8 +21,8 @@ func repositoryDataSourceFactory() datasource.DataSource {
 
 // Metadata should return the full name of the data source, such as
 // examplecloud_thing.
-func (r *repositoryDataSource) Metadata(_ context.Context, _ datasource.MetadataRequest, resp *datasource.MetadataResponse) {
-	resp.TypeName = "github_repository"
+func (r *repositoryDataSource) Metadata(_ context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
+	resp.TypeName = req.ProviderTypeName + "_repository"
 }
 
 func (r *repositoryDataSource) Configure(_ context.Context, req datasource.ConfigureRequest, _ *datasource.ConfigureResponse) {
