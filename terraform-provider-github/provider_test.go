@@ -22,10 +22,10 @@ func TestProvider(t *testing.T) {
 				Taint:        []string{},
 				Config: `
 				data "github_repository" "example" {
-				  full_name = "dappled-dawn/cloud-labs"
+				  full_name = "bbasata/shrinkwrap"
 			        }
 				`,
-				Check:              resource.TestCheckResourceAttr("data.github_repository.example", "description", "hats"),
+				Check:              resource.TestCheckResourceAttr("data.github_repository.example", "description", "As an app, it shortens all the URLs. As a code base, it serves as a sandbox for software design experiments with Ruby and Rails."),
 				Destroy:            false,
 				ExpectNonEmptyPlan: false,
 				ConfigPlanChecks: resource.ConfigPlanChecks{

@@ -2,9 +2,13 @@ package main
 
 import (
 	"context"
+	"fmt"
+	"strings"
 
+	"github.com/google/go-github/v67/github"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/path"
 )
 
 type repositoryDataSource struct {
@@ -37,6 +41,23 @@ func (r *repositoryDataSource) Schema(_ context.Context, _ datasource.SchemaRequ
 // Read is called when the provider must read data source values in
 // order to update state. Config values should be read from the
 // ReadRequest and new state values set on the ReadResponse.
-func (r *repositoryDataSource) Read(ctx context.Context, _ datasource.ReadRequest, resp *datasource.ReadResponse) {
-	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, _path.Root("description"), "This is a test repository")...)
+func (r *repositoryDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+	var fullName string
+	req.Config.GetAttribute(ctx, path.Root("full_name"), &fullName)
+	var segments = strings.Split(fullName, "/")
+
+	if len(segments) != 2 {
+		resp.Diagnostics.AddError("invalid repository name", "repository name must be in the format 'owner/name'")
+		return
+	}
+
+	client := github.NewClient(nil)
+	repo, _, err := client.Repositories.Get(ctx, segments[0], segments[1])
+	if err != nil {
+		resp.Diagnostics.AddError(fmt.Sprintf("failed to get repository %s", fullName), err.Error())
+		return
+	}
+
+	var description = repo.GetDescription()
+	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("description"), description)...)
 }
