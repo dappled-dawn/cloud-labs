@@ -11,7 +11,8 @@ import (
 )
 
 type repositoryDataSource struct {
-	client *github.Client
+	client  *github.Client
+	service *github.RepositoriesService
 }
 
 func repositoryDataSourceFactory() datasource.DataSource {
@@ -28,6 +29,7 @@ func (r *repositoryDataSource) Configure(_ context.Context, req datasource.Confi
 	data, ok := req.ProviderData.(*ProviderData)
 	if ok {
 		r.client = data.client
+		r.service = data.client.Repositories
 	}
 }
 
@@ -53,7 +55,7 @@ func (r *repositoryDataSource) Read(ctx context.Context, req datasource.ReadRequ
 	var repository Repository = Repository{}
 	resp.Diagnostics.Append(req.Config.Get(ctx, &repository)...)
 
-	repo, _, err := r.client.Repositories.Get(ctx, repository.Owner(), repository.Name())
+	repo, _, err := r.service.Get(ctx, repository.Owner(), repository.Name())
 	if err != nil {
 		resp.Diagnostics.AddError(fmt.Sprintf("failed to get repository %s", repository.FullName.ValueString()), err.Error())
 		return
