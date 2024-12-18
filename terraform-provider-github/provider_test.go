@@ -22,13 +22,10 @@ func TestProvider(t *testing.T) {
 				Taint:        []string{},
 				Config: `
 				data "github_repository" "example" {
-				  full_name = "dappled-dawn/terraform-provider-github"
+				  full_name = "dappled-dawn/cloud-labs"
 			        }
-				output "example" {
-				  value = data.github_repository.example.full_name
-				}
 				`,
-				// Check:              func(*terraform.State) error { panic("not implemented") },
+				Check:              resource.TestCheckResourceAttr("data.github_repository.example", "description", "hats"),
 				Destroy:            false,
 				ExpectNonEmptyPlan: false,
 				ConfigPlanChecks: resource.ConfigPlanChecks{

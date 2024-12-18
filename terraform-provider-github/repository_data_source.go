@@ -27,11 +27,16 @@ func (r *repositoryDataSource) Schema(_ context.Context, _ datasource.SchemaRequ
 			Description: "The repository name",
 			Optional:    true,
 		},
+		"description": schema.StringAttribute{
+			Description: "The repository description",
+			Computed:    true,
+		},
 	}
 }
 
 // Read is called when the provider must read data source values in
 // order to update state. Config values should be read from the
 // ReadRequest and new state values set on the ReadResponse.
-func (r *repositoryDataSource) Read(_ context.Context, _ datasource.ReadRequest, _ *datasource.ReadResponse) {
+func (r *repositoryDataSource) Read(ctx context.Context, _ datasource.ReadRequest, resp *datasource.ReadResponse) {
+	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, _path.Root("description"), "This is a test repository")...)
 }
