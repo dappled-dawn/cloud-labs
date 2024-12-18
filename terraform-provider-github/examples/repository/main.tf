@@ -10,10 +10,10 @@ provider "github" {
 }
 
 data "github_repository" "self" {
-  full_name = "dappled-dawn/cloud-labs"
+  full_name = "bbasata/shrinkwrap"
 }
 
 output "repository" {
-  value = data.github_repository.self.ssh_clone_url
+  value = data.github_repository.self
 }
 
