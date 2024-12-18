@@ -3,10 +3,14 @@ package main
 import (
 	"context"
 
+	"github.com/google/go-github/v67/github"
+	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 )
 
 type repositoryResource struct {
+	client *github.Client
 }
 
 // Metadata should return the full name of the resource, such as
@@ -15,12 +19,20 @@ func (r *repositoryResource) Metadata(_ context.Context, req resource.MetadataRe
 	resp.TypeName = req.ProviderTypeName + "_repository"
 }
 
+// Configure is called when the provider is configured. This is where
+// the provider should register its resources.
+func (r *repositoryResource) Configure(_ context.Context, req resource.ConfigureRequest, _ *resource.ConfigureResponse) {
+	providerData := req.ProviderData.(*ProviderData)
+	r.client = providerData.client
+}
+
 // Schema should return the schema for this resource.
 func (r *repositoryResource) Schema(_ context.Context, _ resource.SchemaRequest, _ *resource.SchemaResponse) {
 }
 
 // ImportState is called when the provider must import a resource.
-func (r *repositoryResource) ImportState(_ context.Context, _ resource.ImportStateRequest, _ *resource.ImportStateResponse) {
+func (r *repositoryResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+	resource.ImportStatePassthroughID(ctx, path.Root("full_name"), req, resp)
 }
 
 // Create is called when the provider must create a new resource. Config

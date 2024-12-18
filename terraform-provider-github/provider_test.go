@@ -1,6 +1,7 @@
 package main // todo: main_test
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-framework/providerserver"
@@ -52,16 +53,24 @@ func TestRepositoryResource_Import(t *testing.T) {
 				ConfigVariables: map[string]config.Variable{
 					"": nil,
 				},
-				Check:                                func(*terraform.State) error { panic("not implemented") },
-				Destroy:                              false,
-				ExpectNonEmptyPlan:                   false,
-				ConfigStateChecks:                    []statecheck.StateCheck{},
-				PlanOnly:                             false,
-				PreventDiskCleanup:                   false,
-				PreventPostDestroyRefresh:            false,
-				ImportState:                          true,
-				ImportStateId:                        "bbasata/shrinkwrap",
-				ImportStateCheck:                     func([]*terraform.InstanceState) error { panic("not implemented") },
+				Check:                     func(*terraform.State) error { panic("not implemented") },
+				Destroy:                   false,
+				ExpectNonEmptyPlan:        false,
+				ConfigStateChecks:         []statecheck.StateCheck{},
+				PlanOnly:                  false,
+				PreventDiskCleanup:        false,
+				PreventPostDestroyRefresh: false,
+				ImportState:               true,
+				ImportStateId:             "bbasata/shrinkwrap",
+				ImportStateCheck: func(instances []*terraform.InstanceState) error {
+					if len(instances) != 1 {
+						return fmt.Errorf("expected 1 instance, got %d", len(instances))
+					}
+					if instances[0].Attributes["name"] != "shrinkwrap" {
+						return fmt.Errorf("expected name to be 'shrinkwrap', got %s", instances[0].ID)
+					}
+					return nil
+				},
 				ImportStateVerify:                    true,
 				ImportStateVerifyIdentifierAttribute: "",
 				ImportStateVerifyIgnore:              []string{},

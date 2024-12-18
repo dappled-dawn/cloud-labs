@@ -35,7 +35,12 @@ func (g *githubProvider) Schema(_ context.Context, _ provider.SchemaRequest, _ *
 // Provider interface.
 func (g *githubProvider) Configure(_ context.Context, _ provider.ConfigureRequest, resp *provider.ConfigureResponse) {
 	client := github.NewClient(nil)
+
 	resp.DataSourceData = &ProviderData{
+		client: client,
+	}
+
+	resp.ResourceData = &ProviderData{
 		client: client,
 	}
 }
