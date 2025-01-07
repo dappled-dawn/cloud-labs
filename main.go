@@ -1,11 +1,18 @@
 package main
 
 import (
-	"github.com/hashicorp/terraform-plugin-sdk/v2/plugin"
+	"context"
+
+	"github.com/hashicorp/terraform-plugin-mux/tf5muxserver"
 	"github.com/integrations/terraform-provider-github/v6/github"
 )
 
 func main() {
-	plugin.Serve(&plugin.ServeOpts{
-		ProviderFunc: github.Provider})
+	ctx := context.Background()
+	server, err := github.MuxServer(ctx)
+	if err != nil {
+		panic(err)
+	}
+
+	tf5muxserver.Serve(ctx, server)
 }

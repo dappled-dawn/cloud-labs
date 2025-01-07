@@ -1,6 +1,7 @@
 package github_test
 
 import (
+	"context"
 	"fmt"
 	"os"
 	"testing"
@@ -16,7 +17,8 @@ var realProviderFactories map[string]func() (tfprotov5.ProviderServer, error)
 func init() {
 	realProviderFactories = map[string]func() (tfprotov5.ProviderServer, error){
 		"github": func() (tfprotov5.ProviderServer, error) {
-			return github.Provider().GRPCProvider(), nil
+			ctx := context.Background()
+			return github.ProviderServer(ctx)
 		},
 	}
 }

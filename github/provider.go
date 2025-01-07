@@ -17,7 +17,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
-func MuxServer(ctx context.Context) (tfprotov5.ProviderServer, error) {
+func ProviderServer(ctx context.Context) (tfprotov5.ProviderServer, error) {
 	panic("not implemented")
 }
 
