@@ -1,8 +1,12 @@
 package github
 
 import (
+	"context"
 	"fmt"
 	"testing"
+
+	"github.com/hashicorp/terraform-plugin-go/tfprotov5"
+	"github.com/hashicorp/terraform-plugin-mux/tf5muxserver"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -10,6 +14,7 @@ import (
 
 var testAccProviders map[string]*schema.Provider
 var testAccProviderFactories func(providers *[]*schema.Provider) map[string]func() (*schema.Provider, error)
+var testAccProtoV5ProviderFactories map[string]func() (tfprotov5.ProviderServer, error)
 var testAccProvider *schema.Provider
 
 func init() {
@@ -25,6 +30,14 @@ func init() {
 				return p, nil
 			},
 		}
+	}
+	testAccProtoV5ProviderFactories = map[string]func() (tfprotov5.ProviderServer, error){
+		"github": func() (tfprotov5.ProviderServer, error) {
+			ctx := context.Background()
+			sdkProviderServer := func() tfprotov5.ProviderServer { return Provider().GRPCProvider() }
+
+			return tf5muxserver.NewMuxServer(ctx, sdkProviderServer)
+		},
 	}
 }
 

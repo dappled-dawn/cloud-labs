@@ -26,8 +26,8 @@ func TestAccGithubTeam(t *testing.T) {
 
 		testCase := func(t *testing.T, mode string) {
 			resource.Test(t, resource.TestCase{
-				PreCheck:  func() { skipUnlessMode(t, mode) },
-				Providers: testAccProviders,
+				PreCheck:                 func() { skipUnlessMode(t, mode) },
+				ProtoV5ProviderFactories: testAccProtoV5ProviderFactories,
 				Steps: []resource.TestStep{
 					{
 						Config: config,
