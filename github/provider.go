@@ -11,6 +11,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/hashicorp/terraform-plugin-mux/tf5muxserver"
+
 	"github.com/hashicorp/terraform-plugin-go/tfprotov5"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -18,7 +20,11 @@ import (
 )
 
 func ProviderServer(ctx context.Context) (tfprotov5.ProviderServer, error) {
-	panic("not implemented")
+	servers := []func() tfprotov5.ProviderServer{
+		func() tfprotov5.ProviderServer { return Provider().GRPCProvider() },
+	}
+
+	return tf5muxserver.NewMuxServer(ctx, servers...)
 }
 
 func Provider() *schema.Provider {
