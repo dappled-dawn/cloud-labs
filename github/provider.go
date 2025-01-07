@@ -11,9 +11,15 @@ import (
 	"strings"
 	"time"
 
+	"github.com/hashicorp/terraform-plugin-go/tfprotov5"
+
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
+
+func MuxServer(ctx context.Context) (tfprotov5.ProviderServer, error) {
+	panic("not implemented")
+}
 
 func Provider() *schema.Provider {
 	p := &schema.Provider{
