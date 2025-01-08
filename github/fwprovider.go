@@ -5,6 +5,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/provider"
+	"github.com/hashicorp/terraform-plugin-framework/provider/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 )
 
@@ -22,12 +23,11 @@ func NewFrameworkProvider() provider.Provider {
 // datasource.MetadataRequest.ProviderTypeName and
 // resource.MetadataRequest.ProviderTypeName fields automatically.
 func (f *FrameworkProvider) Metadata(_ context.Context, _ provider.MetadataRequest, _ *provider.MetadataResponse) {
-	panic("not implemented") // TODO: Implement
 }
 
 // Schema should return the schema for this provider.
-func (f *FrameworkProvider) Schema(_ context.Context, _ provider.SchemaRequest, _ *provider.SchemaResponse) {
-	panic("not implemented") // TODO: Implement
+func (f *FrameworkProvider) Schema(_ context.Context, _ provider.SchemaRequest, resp *provider.SchemaResponse) {
+	resp.Schema.Attributes = map[string]schema.Attribute{}
 }
 
 // Configure is called at the beginning of the provider lifecycle, when
@@ -47,7 +47,7 @@ func (f *FrameworkProvider) Configure(_ context.Context, _ provider.ConfigureReq
 // The data source type name is determined by the DataSource implementing
 // the Metadata method. All data sources must have unique names.
 func (f *FrameworkProvider) DataSources(_ context.Context) []func() datasource.DataSource {
-	panic("not implemented") // TODO: Implement
+	return []func() datasource.DataSource{}
 }
 
 // Resources returns a slice of functions to instantiate each Resource
@@ -56,5 +56,5 @@ func (f *FrameworkProvider) DataSources(_ context.Context) []func() datasource.D
 // The resource type name is determined by the Resource implementing
 // the Metadata method. All resources must have unique names.
 func (f *FrameworkProvider) Resources(_ context.Context) []func() resource.Resource {
-	panic("not implemented") // TODO: Implement
+	return []func() resource.Resource{}
 }
