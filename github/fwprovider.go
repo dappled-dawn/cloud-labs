@@ -121,7 +121,6 @@ func (f *FrameworkProvider) Schema(_ context.Context, _ provider.SchemaRequest, 
 // API client, which should be stored on the struct implementing the
 // Provider interface.
 func (f *FrameworkProvider) Configure(_ context.Context, _ provider.ConfigureRequest, _ *provider.ConfigureResponse) {
-	panic("not implemented") // TODO: Implement
 }
 
 // DataSources returns a slice of functions to instantiate each DataSource
